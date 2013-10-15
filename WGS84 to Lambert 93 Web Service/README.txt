@@ -1,0 +1,1 @@
+This is the folder for the WGS84-Lambert93 Web Service project.
