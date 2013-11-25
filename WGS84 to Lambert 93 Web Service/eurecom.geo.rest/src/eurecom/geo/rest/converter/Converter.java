@@ -1,12 +1,65 @@
 package eurecom.geo.rest.converter;
 
-import java.util.Map;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import eurecom.geo.util.converter.*;
+
+import org.apache.commons.io.*;
+
 @Path("/converter")
 public class Converter {
+	
+	public static final String newLine = System.getProperty("line.separator");
+	
+	/* Get data from given source
+	 * @param source: The source's URI
+	 * @return List of lines from source
+	 * */
+	private List<String> getDataFromSource(String source, String encode) {
+		URL website;
+		URLConnection connection;
+		InputStream in;
+		List<String> out;
+		/*ReadableByteChannel rbc;
+		FileOutputStream fos;*/
+		
+		// Need to check the encode to support
+		
+		try {
+			
+			// Create a URL from source
+			website = new URL(source);
+			// Open connection to fetch the resource
+			connection = website.openConnection();
+			// Get resource stream
+			in = connection.getInputStream();
+			// Read resource line by line
+			out = IOUtils.readLines(in, encode);
+			
+			return out;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
+		return null;
+	}
+	
+	/* Write string to file
+	 * @param fileName: Name of the file
+	 * @param encode: File encoding
+	 * @return File
+	 * */
 	
 	@GET
 	@Produces(MediaType.TEXT_HTML)
@@ -16,102 +69,93 @@ public class Converter {
 	
 	@Path("/WGS84Lambert93")
 	@GET
-	@Produces(MediaType.TEXT_HTML)
+	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
 	public String convertWGS84ToLambert93 (@QueryParam("lon") double lon, @QueryParam("lat") double lat) {
-		Point<Double> result = convertGeographicToPlaneLambert(lon, lat, LambertParams.Lambert93);
+		Point<Double> result = WGS84Converter.toLambert93(lon, lat);
 		return result.x + " " + result.y;
+	}
+	
+	@Path("/WGS84Lambert93/file")
+	@GET
+	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
+	public String convertWGS84ToLambert93 (@QueryParam("source") String source, @QueryParam("encode") String encode) {
+		String result = "";
+		
+		List<String> data = getDataFromSource(source, encode);
+		// Convert each coordinates in data and write to output string
+		// Define the number format that we want to use which is US
+		NumberFormat _format = NumberFormat.getInstance(Locale.US);
+		// Loop through all the list
+		for (Iterator<String> i = data.iterator(); i.hasNext(); result += newLine) {
+			String str = i.next();
+			// Get the coordinates
+			String[] coords = str.split(" ");
+			// Check if there is line which does not conform to our format
+			// Continue if not satisfy
+			if (coords.length > 2) {
+				continue;
+			}
+			try {
+				// Convert to double
+				Number nlong = _format.parse(coords[0]);
+				Number nlat = _format.parse(coords[1]);
+				// And do the converting
+				Point<Double> lam = WGS84Converter.toLambert93(
+						Double.parseDouble(nlong.toString()),
+						Double.parseDouble(nlat.toString()));
+				// Append to result string
+				result += lam.x + " " + lam.y;
+			} catch (ParseException e) {
+
+			}
+		}
+		
+		return result;
 	}
 	
 	@Path("/Lambert93WGS84")
 	@GET
-	@Produces(MediaType.TEXT_HTML)
+	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
 	public String convertLambert93ToWGS84 (@QueryParam("x") double x, @QueryParam("y") double y) {
-		Point<Double> result = convertPlaneLambertToGeographic(x, y, LambertParams.Lambert93);
+		Point<Double> result = LambertConverter.fromLambert93ToWGS84(x, y);
 		return Math.toDegrees(result.x) + " " + Math.toDegrees(result.y);
-	}	
-
-	// Algorithm 1
-	private double calculateIsometricLatitude(double lat, double e) {
-		double t = Math.tan((Math.PI/4) + (lat/2));
-		t = t * Math.pow((1 - e * Math.sin(lat))/(1 + e * Math.sin(lat)), e/2);
-		return Math.log(t);
 	}
-
-	// Algorithm 2
-	private double calculateLatitudeFromIsoLat(double isolat, double e, double tol) {
-		double phi_p = 2 * Math.atan(Math.exp(isolat)) - (Math.PI / 2);
-		double phi_c = 0;
-		do {
-			phi_c = 2 * Math.atan(Math.pow((1 + e * Math.sin(phi_p))/(1 - e * Math.sin(phi_p)), e/2) * Math.exp(isolat)) - (Math.PI / 2);
-			if (Math.abs(phi_c - phi_p) > tol) {
-				phi_p = phi_c;
-			} else {
-				break;
+	
+	@Path("/Lambert93WGS84/file")
+	@GET
+	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
+	public String convertLambert93ToWGS84 (@QueryParam("source") String source, @QueryParam("encode") String encode) {
+		String result = "";
+		
+		List<String> data = getDataFromSource(source, encode);
+		// Convert each coordinates in data and write to output string
+		// Define the number format that we want to use which is US
+		NumberFormat _format = NumberFormat.getInstance(Locale.US);
+		// Loop through all the list
+		for(Iterator<String> i = data.iterator() ; i.hasNext() ; result += newLine) {
+			String str = i.next();
+			// Get the coordinates
+			String[] coords = str.split(" ");
+			// Check if there is line which does not conform to our format
+			// Continue if not satisfy
+			if (coords.length > 2) {
+				continue;
 			}
-		} while(true);
-		return phi_c;
-	}
-	
-	// Algorithm 3
-	private Point<Double> convertGeographicToPlaneLambert(double lon, double lat, Map<String,Double> params) {
-		Point<Double> result = new Point<>();
-		
-		double lonRad = Math.toRadians(lon);
-		double latRad = Math.toRadians(lat);
-		
-		double il = calculateIsometricLatitude(latRad, LambertParams.Lambert93.get("e"));
-		
-		result.x = LambertParams.Lambert93.get("xs") + (LambertParams.Lambert93.get("c") * Math.exp(-1 * LambertParams.Lambert93.get("n") * il) * Math.sin(LambertParams.Lambert93.get("n") * (lonRad - LambertParams.Lambert93.get("lamda0Green"))));
-		result.y = LambertParams.Lambert93.get("ys") - (LambertParams.Lambert93.get("c") * Math.exp(-1 * LambertParams.Lambert93.get("n") * il) * Math.cos(LambertParams.Lambert93.get("n") * (lonRad - LambertParams.Lambert93.get("lamda0Green"))));
-		
-		return result;
-	}
-
-	
-	// Algorithm 4
-	private Point<Double> convertPlaneLambertToGeographic(double x, double y, Map<String,Double> params) {
-		Point<Double> result = new Point<>();
-		
-		double r = Math.sqrt(Math.pow(x - LambertParams.Lambert93.get("xs"), 2) + Math.pow(y - LambertParams.Lambert93.get("ys"), 2));
-		double gamma = Math.atan((x - LambertParams.Lambert93.get("xs")) / (LambertParams.Lambert93.get("ys") - y));
-		result.x = LambertParams.Lambert93.get("lamda0Green") + (gamma / LambertParams.Lambert93.get("n"));
-		double il = (-1 / LambertParams.Lambert93.get("n") )* Math.log(Math.abs(r/LambertParams.Lambert93.get("c")));
-		result.y = calculateLatitudeFromIsoLat(il, LambertParams.Lambert93.get("e"), Math.pow(10.0, -11));
-		
-		return result;
-	}
-
-	// Algorithm 21
-	/*private double calculateEllipsoidGrandNormal(double lat, double a, double e) {
-		double N = a / Math.sqrt(1 - (e * e * Math.pow(Math.sin(lat), 2)));
-		return N;
-	}
-
-	// Algorithm 54
-	private void lambertSecanteParams(double a, double e, double lamda0, double phi0, double phi1, double phi2, double x0, double y0) {
-		lamdaC = lamda0;
-		n1 = calculateEllipsoidGrandNormal(phi1, a, e);
-		n2 = calculateEllipsoidGrandNormal(phi2, a, e);
-		il1 = calculateIsometricLatitude(phi1, e);
-		il2 = calculateIsometricLatitude(phi2, e);
-		
-		n = Math.log((n2 * Math.cos(phi2))/(n1 * Math.cos(phi1))) / (il1 - il2);
-		c = n1 * Math.cos(phi1) * Math.exp(n * il1) / n;
-		if(phi0.toFixed(4) == (Math.PI/2).toFixed(4)) {
-			xs = x0;
-			ys = y0;
-		} else {
-			xs = x0;
-			ys = y0 + c * Math.exp(n * calculateIsometricLatitude(phi0, e));
+			try {
+				// Convert to double
+				Number nx = _format.parse(coords[0]);
+				Number ny = _format.parse(coords[1]);
+				// And do the converting
+				Point<Double> wgs = LambertConverter.fromLambert93ToWGS84(
+						Double.parseDouble(nx.toString()), 
+						Double.parseDouble(ny.toString()));
+				// Append to result string
+				result += Math.toDegrees(wgs.x) + " " + Math.toDegrees(wgs.y);
+			} catch (ParseException e) {
+				
+			}
 		}
 		
-		return {
-			lamdaC: lamdaC,
-			e: e,
-			n: n,
-			c: c,
-			xs: xs,
-			ys: ys
-		};
-	}*/
+		return result;
+	}
 }
