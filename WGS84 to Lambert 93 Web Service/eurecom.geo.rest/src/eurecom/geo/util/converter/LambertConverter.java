@@ -121,16 +121,16 @@ public class LambertConverter {
 			Map<String, Double> params) {
 		Point<Double> result = new Point<>();
 
-		double r = Math.sqrt(Math.pow(x - LambertParams.Lambert93.get("xs"), 2)
-				+ Math.pow(y - LambertParams.Lambert93.get("ys"), 2));
-		double gamma = Math.atan((x - LambertParams.Lambert93.get("xs"))
-				/ (LambertParams.Lambert93.get("ys") - y));
-		result.x = LambertParams.Lambert93.get("lamda0Green")
-				+ (gamma / LambertParams.Lambert93.get("n"));
-		double il = (-1 / LambertParams.Lambert93.get("n"))
-				* Math.log(Math.abs(r / LambertParams.Lambert93.get("c")));
+		double r = Math.sqrt(Math.pow(x - params.get("xs"), 2)
+				+ Math.pow(y - params.get("ys"), 2));
+		double gamma = Math.atan((x - params.get("xs"))
+				/ (params.get("ys") - y));
+		result.x = params.get("lamda0Green")
+				+ (gamma / params.get("n"));
+		double il = (-1 / params.get("n"))
+				* Math.log(Math.abs(r / params.get("c")));
 		result.y = Utilities.calculateLatitudeFromIsoLat(il,
-				LambertParams.Lambert93.get("e"), Math.pow(10.0, -11));
+				params.get("e"), Math.pow(10.0, -11));
 
 		return result;
 	}

@@ -13,6 +13,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import eurecom.geo.util.converter.*;
+import eurecom.geo.util.converter.UTMConverter.*;
 
 import org.apache.commons.io.*;
 
@@ -138,7 +139,7 @@ public class Converter {
 			String[] coords = str.split(" ");
 			// Check if there is line which does not conform to our format
 			// Continue if not satisfy
-			if (coords.length > 2) {
+			if (coords.length > 2 || coords.length <= 0) {
 				continue;
 			}
 			try {
@@ -149,6 +150,107 @@ public class Converter {
 				Point<Double> wgs = LambertConverter.fromLambert93ToWGS84(
 						Double.parseDouble(nx.toString()), 
 						Double.parseDouble(ny.toString()));
+				// Append to result string
+				result += Math.toDegrees(wgs.x) + " " + Math.toDegrees(wgs.y);
+			} catch (ParseException e) {
+				
+			}
+		}
+		
+		return result;
+	}
+	
+	@Path("/WGS84WGS84UTM")
+	@GET
+	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
+	public String convertWGS84ToWGS84UTM (@QueryParam("lon") double lon, @QueryParam("lat") double lat) {
+		UTMCoord result = WGS84Converter.toUTM(lon, lat);
+		return result.x + " " + result.y + " " + result.zone + " " + result.hem;
+	}
+	
+	@Path("/WGS84WGS84UTM/file")
+	@GET
+	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
+	public String convertWGS84ToWGS84UTM (@QueryParam("source") String source, @QueryParam("encode") String encode) {
+		String result = "";
+		
+		List<String> data = getDataFromSource(source, encode);
+		// Convert each coordinates in data and write to output string
+		// Define the number format that we want to use which is US
+		NumberFormat _format = NumberFormat.getInstance(Locale.US);
+		// Loop through all the list
+		for (Iterator<String> i = data.iterator(); i.hasNext(); result += newLine) {
+			String str = i.next();
+			// Get the coordinates
+			String[] coords = str.split(" ");
+			// Check if there is line which does not conform to our format
+			// Continue if not satisfy
+			if (coords.length > 2 || coords.length <= 0) {
+				continue;
+			}
+			try {
+				// Convert to double
+				Number nlong = _format.parse(coords[0]);
+				Number nlat = _format.parse(coords[1]);
+				// And do the converting
+				Point<Double> lam = WGS84Converter.toLambert93(
+						Double.parseDouble(nlong.toString()),
+						Double.parseDouble(nlat.toString()));
+				// Append to result string
+				result += lam.x + " " + lam.y;
+			} catch (ParseException e) {
+
+			}
+		}
+		
+		return result;
+	}
+	
+	@Path("/WGS84UTMWGS84")
+	@GET
+	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
+	public String convertWGS84UTMToWGS84 (@QueryParam("x") double x, @QueryParam("y") double y, @QueryParam("zone") double zone, @QueryParam("hem") String hem) {
+		Point<Double> result = UTMConverter.toWGS84(x, y, zone, hem);
+		if (result == null) {
+			return "Some parameters are wrong!";
+		} else {
+			return Math.toDegrees(result.x) + " " + Math.toDegrees(result.y);
+		}
+		//return x + " " + y + " " + zone + " " + hem;
+	}
+	
+	@Path("/WGS84UTMWGS84/file")
+	@GET
+	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
+	public String convertWGS84UTMToWGS84 (@QueryParam("source") String source, @QueryParam("encode") String encode) {
+		String result = "";
+		
+		List<String> data = getDataFromSource(source, encode);
+		// Convert each coordinates in data and write to output string
+		// Define the number format that we want to use which is US
+		NumberFormat _format = NumberFormat.getInstance(Locale.US);
+		// Loop through all the list
+		for(Iterator<String> i = data.iterator() ; i.hasNext() ; result += newLine) {
+			String str = i.next();
+			// Get the coordinates
+			String[] coords = str.split(" ");
+			// Check if there is line which does not conform to our format
+			// Continue if not satisfy
+			if (coords.length > 4 || coords.length <= 0) {
+				continue;
+			}
+			try {
+				// Convert to double
+				Number nx = _format.parse(coords[0]);
+				Number ny = _format.parse(coords[1]);
+				Number nz = _format.parse(coords[2]);
+				String hem = coords[3];
+				// And do the converting
+				Point<Double> wgs = UTMConverter.toWGS84(
+						Double.parseDouble(nx.toString()), 
+						Double.parseDouble(ny.toString()),
+						Double.parseDouble(nz.toString()),
+						hem);
 				// Append to result string
 				result += Math.toDegrees(wgs.x) + " " + Math.toDegrees(wgs.y);
 			} catch (ParseException e) {
