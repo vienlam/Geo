@@ -1,5 +1,7 @@
 package eurecom.geo.rest.converter;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -11,6 +13,8 @@ import java.util.Locale;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import eurecom.geo.util.converter.*;
 import eurecom.geo.util.converter.UTMConverter.*;
@@ -61,6 +65,20 @@ public class Converter {
 	 * @param encode: File encoding
 	 * @return File
 	 * */
+	private File writeToFile(String str) {
+		File file = null;
+		try {
+			file = new File("result.txt");
+			file.mkdirs();
+			file.createNewFile();
+			FileUtils.writeStringToFile(file, str);
+			return file;
+		} catch (IOException e) {
+			
+		}
+		
+		return null;
+	}
 	
 	@GET
 	@Produces(MediaType.TEXT_HTML)
@@ -79,7 +97,7 @@ public class Converter {
 	@Path("/WGS84Lambert93/file")
 	@GET
 	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
-	public String convertWGS84ToLambert93 (@QueryParam("source") String source, @QueryParam("encode") String encode) {
+	public Response convertWGS84ToLambert93 (@QueryParam("source") String source, @QueryParam("encode") String encode) {
 		String result = "";
 		
 		List<String> data = getDataFromSource(source, encode);
@@ -111,7 +129,20 @@ public class Converter {
 			}
 		}
 		
-		return result;
+		File file = writeToFile(result);
+		
+		if (file != null) {
+			ResponseBuilder responseBuilder = Response.ok((Object) file);
+			responseBuilder.header("Content-Disposition",
+					"attachment; filename=\"file_from_server.log\"");
+			Response response = responseBuilder.build();
+			//file.delete();
+			return response;
+		} else {
+			return Response.status(200).entity(result).build();
+		}
+		
+		//return result;
 	}
 	
 	@Path("/Lambert93WGS84")

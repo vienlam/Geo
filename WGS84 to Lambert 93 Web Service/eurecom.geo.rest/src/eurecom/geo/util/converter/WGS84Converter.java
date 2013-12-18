@@ -8,7 +8,7 @@ import eurecom.geo.util.converter.UTMConverter.*;
 
 public class WGS84Converter {
 
-	public static final double e = 0.081_819_191_042_815_79;
+	public static final double e = 0.081_819_190_928_906_24;//0.081_819_191_119_888_33; //GRS80
 	public static final double a = 6_378_137.0;
 	
 	public static Point<Double> toLambert93(double lon, double lat) {

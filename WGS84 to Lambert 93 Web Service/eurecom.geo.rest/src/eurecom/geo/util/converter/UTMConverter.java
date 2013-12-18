@@ -55,15 +55,19 @@ public class UTMConverter {
 				
 		double re = (y - params.get("ys")) / (n * coefs.get(0));
 		double im = (x - params.get("xs")) / (n * coefs.get(0));
+		double rep = 0, imp = 0;
 		
 		for(int k = 1 ; k < coefs.size() ; k++) {
-			re -= n * coefs.get(k) * Math.sin(2 * k * re);
-			im -= n * coefs.get(k) * Math.sin(2 * k * im);
+			rep += coefs.get(k) * Math.sin(2 * k * re);
+			imp += coefs.get(k) * Math.sin(2 * k * im);
 		}
 		
-		double lon = lonoriRad + Math.atan(Math.sin(im) / Math.cos(re));
-		double phi = Math.asin(Math.sin(re) / Math.cos(im));
+		rep = re - rep;
+		imp = im - imp;
 		
+		double lon = lonoriRad + Math.atan(Math.sinh(imp) / Math.cos(rep));
+		
+		double phi = Math.asin(Math.sin(rep) / Math.cosh(imp));
 		double iso = Utilities.calculateIsometricLatitude(phi, 0);
 		double lat = Utilities.calculateLatitudeFromIsoLat(iso, WGS84Converter.e, Math.pow(10.0, -11));
 		
@@ -158,7 +162,7 @@ public class UTMConverter {
 		c = (1 / 8) * e2 + (1 / 48) * e4 + (7 / 2048) * e6 + (1 / 61440) * e8;
 		coefs.add(c);
 		// Coefficient 3
-		c = (1 / 768) * e4 + (3 / 1280) * e6 + (599 / 268640) * e8;
+		c = (1 / 768) * e4 + (3 / 1280) * e6 + (559 / 368640) * e8;
 		coefs.add(c);
 		// Coefficient 4
 		c = (17 / 30720) * e6 + (283 / 430080) * e8;
