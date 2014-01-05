@@ -8,7 +8,7 @@ import eurecom.geo.util.converter.UTMConverter.*;
 
 public class WGS84Converter {
 
-	public static final double e = 0.081_819_190_928_906_24;//0.081_819_191_119_888_33; //GRS80
+	public static final double e = 0.081_819_191_042_831_85;//0.081_819_190_928_906_24;//0.081_819_191_119_888_33; //GRS80
 	public static final double a = 6_378_137.0;
 	
 	public static Point<Double> toLambert93(double lon, double lat) {
@@ -41,12 +41,23 @@ public class WGS84Converter {
 		return result;
 	}
 	
+	/* Project WGS84 to UTM Coordinate
+	 * @param lon: longitude coordinate
+	 * @param lat: latitude coordinate
+	 * @return UTMCoord: UTM coordinate structure which contains the x, y, zone, and hemisphere
+	 * */
 	public static UTMCoord toUTM(double lon, double lat) {
 		UTMCoord result;
+		
+		// Determine the hemisphere in which the WGS84 coordinate is in
 		if (lat < 0) {
+			// Project to UTM with parameter for South hemisphere
+			// Go to algorithm 30
 			result = convertGeographicToUTM(lon, lat, UTMConverter.Params.South);
 			result.hem = "South";
 		} else {
+			// Project to UTM with parameter for North hemisphere
+			// Go to algorithm 30
 			result = convertGeographicToUTM(lon, lat, UTMConverter.Params.North);
 			result.hem = "North";
 		}
@@ -76,9 +87,19 @@ public class WGS84Converter {
 	
 	
 	// Algorithm 30
+	/* Project WGS84 coordinate onto UTM
+	 * @param lon: longitude
+	 * @param lat: latitude
+	 * @param params: parameters for UTM projection
+	 * */
 	private static UTMCoord convertGeographicToUTM (double lon, double lat, Map<String, Double> params) {
 		UTMCoord result = new UTMCoord();
+		
+		// Parameter n for UTM projection
+		// a is the semi-major axis of GRS80 ellipsoid
 		double n = 0.9996 * a; // GRS 80, 0.9996 * a
+		
+		// Determine the zone of the coodinate
 		double zone = Math.floor((lon + 180)/6) + 1; 
 		if( lat >= 56.0 && lat < 64.0 && lon >= 3.0 && lon < 12.0 ) {
 		    zone = 32;
@@ -96,22 +117,28 @@ public class WGS84Converter {
 		  }
 		}
 		
-		double lonori = zone * 6 - 183; // zone -1
+		// the origin longitude parameter for UTM projection
+		double lonori = zone * 6 - 183;
 		
+		// Convert all coordinates to radian for calculation
 		double lonRad = Math.toRadians(lon);
 		double latRad = Math.toRadians(lat);
 		double lonoriRad = Math.toRadians(lonori);
 		
+		// Calculate needed coefficients for projection
 		List<Double> coefs = UTMConverter.calculateCoefficientsForProjection(e);
 		
+		// Calculate isometric latitude from latitude and first eccentricity of 
+		// GRS80 ellipsoid, needed for calculate the lamda later
 		double iso = Utilities.calculateIsometricLatitude(latRad, e);
-		
+		// needed for calculate isos later
 		double phi = Math.asin(Math.sin(lonRad - lonoriRad) / Math.cosh(iso));
 		
+		// Needed for calculate UTM coordinate
 		double isos = Utilities.calculateIsometricLatitude(phi, 0);
-		
 		double lamda = Math.atan(Math.sinh(iso) / Math.cos(lonRad - lonoriRad));
 		
+		// Calculate the resulting UTM coordinate
 		double x = n * coefs.get(0) * isos;
 		double y = n * coefs.get(0) * lamda;
 		
@@ -123,6 +150,7 @@ public class WGS84Converter {
 		x += params.get("xs");
 		y += params.get("ys");
 		
+		// Get the resulting UTM coordinate
 		result.x = x;
 		result.y = y;
 		result.zone = (int) zone;
