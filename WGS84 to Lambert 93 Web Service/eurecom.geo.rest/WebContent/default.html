@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="./style/stylesheet.css">
+<script type="text/javascript" src="./js/converter.js"></script>
+<title>Eurecom Geoconverter API</title>
+<script type="text/javascript">
+	function project1Change() {
+		if (document.getElementById("project1").value == "UTM") {
+			document.getElementById("s1coord1").innerHTML = "X:";
+			document.getElementById("s1coord1").setAttribute("value", "x");
+			document.getElementById("s1coord2").innerHTML = "Y:";
+			document.getElementById("s1coord2").setAttribute("value", "y");
+			document.getElementById("s1UTM").style.visibility = "visible";
+		} else if (document.getElementById("project1").value == "Lambert93") {
+			document.getElementById("s1coord1").innerHTML = "X:";
+			document.getElementById("s1coord1").setAttribute("value", "x");
+			document.getElementById("s1coord2").innerHTML = "Y:";
+			document.getElementById("s1coord2").setAttribute("value", "y");
+			document.getElementById("s1UTM").style.visibility = "hidden";
+		} else {
+			document.getElementById("s1coord1").innerHTML = "Longitude (D):";
+			document.getElementById("s1coord1").setAttribute("value", "lon");
+			document.getElementById("s1coord2").innerHTML = "Latitude (D):";
+			document.getElementById("s1coord2").setAttribute("value", "lat");
+			document.getElementById("s1UTM").style.visibility = "hidden";
+		}
+	}
+	
+	function project2Change() {
+		if (document.getElementById("project2").value == "UTM") {
+			document.getElementById("s2coord1").innerHTML = "X:";
+			document.getElementById("s2coord1").setAttribute("value", "x");
+			document.getElementById("s2coord2").innerHTML = "Y:";
+			document.getElementById("s2coord2").setAttribute("value", "y");
+			document.getElementById("s2UTM").style.visibility = "visible";
+		} else if (document.getElementById("project2").value == "Lambert93") {
+			document.getElementById("s2coord1").innerHTML = "X:";
+			document.getElementById("s2coord1").setAttribute("value", "x");
+			document.getElementById("s2coord2").innerHTML = "Y:";
+			document.getElementById("s2coord2").setAttribute("value", "y");
+			document.getElementById("s2UTM").style.visibility = "hidden";
+		} else {
+			document.getElementById("s2coord1").innerHTML = "Longitude (D):";
+			document.getElementById("s2coord1").setAttribute("value", "lon");
+			document.getElementById("s2coord2").innerHTML = "Latitude (D):";
+			document.getElementById("s2coord2").setAttribute("value", "lat");
+			document.getElementById("s2UTM").style.visibility = "hidden";
+		}
+	}
+	
+	function s1convert() {
+		convert(1);
+	}
+	
+	function s2convert() {
+		convert(2);
+	}
+		
+</script>
+</head>
+<body>
+
+<div class="container">
+	<section id="left">
+		<div id="title_container">
+			<div id="title">Geo Converter</div>
+			<div id="subtitle">A Geographic Coordinate Converter</div>
+		</div>
+		<div id="menu_container">
+			<div class="menu_item"><a href="./Readme.html">Read me</a></div>
+			<div class="menu_item"><a href="./#">Datum info</a></div>
+		</div>
+	</section>
+
+	<section id="middle">
+		<div class="conversion_source">
+			<div class="source">
+				<div class="source_title">System 1</div>
+				<div class="field_container">
+					<label class="label">Datum:</label>
+					<select id="system1" class="field">
+						<option value="WGS84" selected="selected">WGS84</option>
+						<option value="RGF93">RGF93</option>
+					</select>
+				</div>
+				<div class="field_container">
+					<label class="label">Projection:</label>
+					<select id="project1" class="field" onchange="project1Change()">
+						<option value="UTM">UTM</option>
+						<option value="Lambert93">Lambert93</option>
+						<option value="None" selected="selected">None</option>
+					</select>
+				</div>
+				<div class="field_container">
+					<label id="s1coord1" class="label" value="lon">Longitude (D):</label>
+					<input type="text" id="txts1coord1" class="field"/>
+				</div>
+				<div class="field_container">
+					<label id="s1coord2" class="label" value="lat">Latitude (D):</label>
+					<input type="text" id="txts1coord2" class="field"/>
+				</div>
+				<div id="s1UTM" style="visibility: hidden;" class="field_container">
+					<label id="s1UTMzone" class="label">Zone:</label>
+					<input type="text" id="txts1UTMzone" class="field_zone"/>
+					
+					<input type="radio" name="s1UTMhem" id="s1UTMhemN" value="N" checked="checked"/>
+          			<label for="s1UTMhemN">North</label>
+          			<input type="radio" name="s1UTMhem" id="s1UTMhemS" value="S"/>
+          			<label for="s1UTMhemN">South</label>
+				</div>
+				<div class="fieldend"><button class="button" onclick="s1convert()">Convert S1-S2</button></div>
+             </div>
+		</div>
+		<div class="conversion_source">
+			<div class="source">
+				<div class="source_title">System 2</div>
+				<div class="field_container">
+					<label class="label">Datum:</label>
+					<select id="system2" class="field">
+						<option value="WGS84" selected="selected">WGS84</option>
+						<option value="RGF93">RGF93</option>
+					</select>
+				</div>
+				<div class="field_container">
+					<label class="label">Projection:</label>
+					<select id="project2" class="field"  onchange="project2Change()">
+						<option value="UTM" selected="selected">UTM</option>
+						<option value="Lambert93">Lambert93</option>
+						<option value="None">None</option>
+					</select>
+				</div>
+				<div class="field_container">
+					<label id="s2coord1" class="label" value="x">X:</label>
+					<input type="text" id="txts2coord1" class="field"/>
+				</div>
+				<div class="field_container">
+					<label id="s2coord2" class="label" value="y">Y:</label>
+					<input type="text" id="txts2coord2" class="field"/>
+				</div>
+				<div id="s2UTM" class="field_container">
+					<label id="s2UTMzone" class="label">Zone:</label>
+					<input type="text" id="txts2UTMzone" class="field_zone"/>
+					
+					<input type="radio" name="s2UTMhem" id="s2UTMhemN" value="N" checked="checked"/>
+          			<label for="s2UTMhemN">North</label>
+          			<input type="radio" name="s2UTMhem" id="s2UTMhemS" value="S"/>
+          			<label for="s2UTMhemN">South</label>
+				</div>
+				<div class="fieldend"><button class="button" onclick="s2convert()">Convert S2-S1</button></div>
+             </div>
+		</div>
+		<div id="error-log" class="error"></div>
+		<div id="url"></div>
+	</section>
+	
+	<section id="right">
+		<div id="logo_container"><img alt="Eurecom Logo" src="./images/EURECOM_logo_rs.jpg"/></div>
+	</section>
+</div>
+<div class="nofloat"></div>
+<div id="map">
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+	<script>
+	function show(position) {
+	  var mapcanvas = document.getElementById("map");
+	   
+	  var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+	  var myOptions = {
+	    zoom: 15,
+	    center: latlng,
+	    mapTypeControl: false,
+	    navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
+	    mapTypeId: google.maps.MapTypeId.ROADMAP
+	  };
+	  var map = new google.maps.Map(mapcanvas, myOptions);
+	   
+	  var marker = new google.maps.Marker({
+	      position: latlng,
+	      map: map,
+	      title:"It's here!"
+	  });
+	  
+	  mapcanvas.style.position = "fixed";
+	  mapcanvas.style.top = 0;
+	  mapcanvas.style.left = 0;
+	}
+	 
+	function error(msg) {
+	  var s = document.querySelector('#error-log');
+	  s.innerHTML = typeof msg == 'string' ? msg : "failed";
+	   
+	  // console.log(arguments);
+	}
+	</script>
+</div>
+<script type="text/javascript">
+	if (navigator.geolocation) {
+	  navigator.geolocation.getCurrentPosition(show, error);
+	} else {
+	  error('not supported');
+	}
+</script>
+</body>
+</html>

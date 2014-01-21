@@ -71,7 +71,7 @@ public class LambertConverter {
 	 * @return The point which contains the longitude in x and latitude in y of WGS84
 	 * */
 	public static Point<Double> fromLambert93ToWGS84(double x, double y) {
-		Point<Double> result = convertPlaneLambertToGeographic(x, y, LambertParams.Lambert93);
+		Point<Double> result = inverse(x, y, LambertParams.Lambert93);
 		return result;
 	}
 	
@@ -81,7 +81,7 @@ public class LambertConverter {
 	 * @return The point which contains the longitude in x and latitude in y of WGS84
 	 * */
 	public static Point<Double> fromLambertIToWGS84(double x, double y) {
-		Point<Double> result = convertPlaneLambertToGeographic(x, y, LambertParams.LambertI);
+		Point<Double> result = inverse(x, y, LambertParams.LambertI);
 		return result;
 	}
 	
@@ -91,7 +91,7 @@ public class LambertConverter {
 	 * @return The point which contains the longitude in x and latitude in y of WGS84
 	 * */
 	public static Point<Double> fromLambertIIToWGS84(double x, double y) {
-		Point<Double> result = convertPlaneLambertToGeographic(x, y, LambertParams.LambertII);
+		Point<Double> result = inverse(x, y, LambertParams.LambertII);
 		return result;
 	}
 	
@@ -101,7 +101,7 @@ public class LambertConverter {
 	 * @return The point which contains the longitude in x and latitude in y of WGS84
 	 * */
 	public static Point<Double> fromLambertIIIToWGS84(double x, double y) {
-		Point<Double> result = convertPlaneLambertToGeographic(x, y, LambertParams.LambertIII);
+		Point<Double> result = inverse(x, y, LambertParams.LambertIII);
 		return result;
 	}
 	
@@ -111,26 +111,24 @@ public class LambertConverter {
 	 * @return The point which contains the longitude in x and latitude in y of WGS84
 	 * */
 	public static Point<Double> fromLambertIVToWGS84(double x, double y) {
-		Point<Double> result = convertPlaneLambertToGeographic(x, y, LambertParams.LambertIV);
+		Point<Double> result = inverse(x, y, LambertParams.LambertIV);
 		return result;
 	}
 
 
 	// Algorithm 4
-	private static Point<Double> convertPlaneLambertToGeographic(double x, double y,
-			Map<String, Double> params) {
+	private static Point<Double> inverse(double x, double y, Map<String, Double> params) {
 		Point<Double> result = new Point<>();
 
-		double r = Math.sqrt(Math.pow(x - params.get("xs"), 2)
-				+ Math.pow(y - params.get("ys"), 2));
-		double gamma = Math.atan((x - params.get("xs"))
-				/ (params.get("ys") - y));
-		result.x = params.get("lamda0Green")
-				+ (gamma / params.get("n"));
-		double il = (-1 / params.get("n"))
-				* Math.log(Math.abs(r / params.get("c")));
-		result.y = Utilities.calculateLatitudeFromIsoLat(il,
-				params.get("e"), Math.pow(10.0, -11));
+		double r = Math.sqrt(Math.pow(x - params.get("xs"), 2) + Math.pow(y - params.get("ys"), 2));
+		
+		double gamma = Math.atan((x - params.get("xs"))	/ (params.get("ys") - y));
+		
+		result.x = params.get("lamda0Green") + (gamma / params.get("n"));
+		
+		double il = (-1 / params.get("n")) * Math.log(Math.abs(r / params.get("c")));
+		
+		result.y = Utilities.calculateLatitudeFromIsoLat(il, params.get("e"), Math.pow(10.0, -11));
 
 		return result;
 	}
