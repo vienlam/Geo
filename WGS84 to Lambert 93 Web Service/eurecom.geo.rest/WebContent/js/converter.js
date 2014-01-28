@@ -98,6 +98,8 @@ function convert(m) {
 	
 	document.getElementById("url").innerHTML = url;
 	
+	url += "&mapview=1";
+	
 	if (window.XMLHttpRequest) {
 		xmlhttp = new XMLHttpRequest();
 	} else {
@@ -119,6 +121,10 @@ function convert(m) {
 					} else {
 						document.getElementById("s2UTMhemS").checked = true;
 					}
+					showOnMap(res[5], res[4]);
+				}
+				else {
+					showOnMap(res[3], res[2]);
 				}
 			} else if (mode == 2) {
 				document.getElementById("txts1coord1").value = res[0];
@@ -131,6 +137,10 @@ function convert(m) {
 					} else {
 						document.getElementById("s1UTMhemS").checked = true;
 					}
+					showOnMap(res[5], res[4]);
+				}
+				else {
+					showOnMap(res[3], res[2]);
 				}
 			}
 		} else {
@@ -153,4 +163,10 @@ function convert(m) {
 
 	xmlhttp.open("GET", url, true);
 	xmlhttp.send(null);
+}
+
+function showOnMap(lat, long) {
+	var latlng = new google.maps.LatLng(lat, long);
+	marker.setPosition(latlng);
+	map.panTo(latlng);
 }

@@ -83,14 +83,17 @@ public class Converter {
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String returnTitle() {
-		return "This is a converter";
+		return "This is a converter :)";
 	}
 	
 	@Path("/WGS84RGF93Lambert93")
 	@GET
 	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
-	public String convertWGS84ToLambert93 (@QueryParam("lon") double lon, @QueryParam("lat") double lat) {
+	public String convertWGS84ToLambert93 (@QueryParam("lon") double lon, @QueryParam("lat") double lat, @QueryParam("mapview") int map) {
 		Point<Double> result = WGS84Converter.toLambert93(lon, lat);
+		if (map == 1) {
+			return result.x + " " + result.y + " " + lon + " " + lat;
+		}
 		return result.x + " " + result.y;
 	}
 	
@@ -148,9 +151,14 @@ public class Converter {
 	@Path("/RGF93Lambert93WGS84")
 	@GET
 	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
-	public String convertLambert93ToWGS84 (@QueryParam("x") double x, @QueryParam("y") double y) {
+	public String convertLambert93ToWGS84 (@QueryParam("x") double x, @QueryParam("y") double y, @QueryParam("mapview") int map) {
 		Point<Double> result = LambertConverter.fromLambert93ToWGS84(x, y);
-		return Math.toDegrees(result.x) + " " + Math.toDegrees(result.y);
+		
+		String res = Math.toDegrees(result.x) + " " + Math.toDegrees(result.y);
+		if (map == 1) {
+			res += " " + res;
+		}
+		return res;
 	}
 	
 	@Path("/RGF93Lambert93WGS84/file")
@@ -194,10 +202,14 @@ public class Converter {
 	@Path("/WGS84WGS84UTM")
 	@GET
 	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
-	public String convertWGS84ToWGS84UTM (@QueryParam("lon") double lon, @QueryParam("lat") double lat) {
+	public String convertWGS84ToWGS84UTM (@QueryParam("lon") double lon, @QueryParam("lat") double lat, @QueryParam("mapview") int map) {
 		UTMCoord result = UTMConverter.convert(Math.toRadians(lon), Math.toRadians(lat), WGS84Converter.a, WGS84Converter.b);
 		//UTMCoord result = WGS84Converter.toUTM(lon, lat);
-		return result.x + " " + result.y + " " + result.zone + " " + result.hem;
+		String res = result.x + " " + result.y + " " + result.zone + " " + result.hem;
+		if (map == 1) {
+			res += " " + lon + " " + lat;
+		}
+		return res;
 	}
 	
 	@Path("/WGS84WGS84UTM/file")
@@ -241,13 +253,17 @@ public class Converter {
 	@Path("/WGS84UTMWGS84")
 	@GET
 	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
-	public String convertWGS84UTMToWGS84 (@QueryParam("x") double x, @QueryParam("y") double y, @QueryParam("zone") double zone, @QueryParam("hem") String hem) {
+	public String convertWGS84UTMToWGS84 (@QueryParam("x") double x, @QueryParam("y") double y, @QueryParam("zone") double zone, @QueryParam("hem") String hem, @QueryParam("mapview") int map) {
 		Point<Double> result = UTMConverter.inverse(x, y, zone, hem, WGS84Converter.a, WGS84Converter.b);
 		
 		if (result == null) {
 			return "Some parameters are wrong!";
 		} else {
-			return Math.toDegrees(result.x) + " " + Math.toDegrees(result.y);
+			String res = Math.toDegrees(result.x) + " " + Math.toDegrees(result.y);
+			if (map == 1) {
+				res += " " + res;
+			}
+			return res;
 		}
 		//return x + " " + y + " " + zone + " " + hem;
 	}
@@ -297,18 +313,26 @@ public class Converter {
 	@Path("/RGF93Lambert93WGS84UTM")
 	@GET
 	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
-	public String convertRGF93Lamber93ToWGS84UTM(@QueryParam("x") double x, @QueryParam("y") double y) {
+	public String convertRGF93Lamber93ToWGS84UTM(@QueryParam("x") double x, @QueryParam("y") double y, @QueryParam("mapview") int map) {
 		Point<Double> wgs = LambertConverter.fromLambert93ToWGS84(x, y);
 		UTMCoord result = UTMConverter.convert(wgs.x, wgs.y, WGS84Converter.a, WGS84Converter.b);
-		return result.x + " " + result.y + " " + result.zone + " " + result.hem;
+		String res = result.x + " " + result.y + " " + result.zone + " " + result.hem;
+		if (map == 1) {
+			res += " " + wgs.x + " " + wgs.y;
+		}
+		return res;
 	}
 	
 	@Path("/WGS84UTMRGF93Lambert93")
 	@GET
 	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
-	public String convertWGS84UTMToRGF93Lamber93(@QueryParam("x") double x, @QueryParam("y") double y, @QueryParam("zone") double zone, @QueryParam("hem") String hem) {
+	public String convertWGS84UTMToRGF93Lamber93(@QueryParam("x") double x, @QueryParam("y") double y, @QueryParam("zone") double zone, @QueryParam("hem") String hem, @QueryParam("mapview") int map) {
 		Point<Double> wgs = UTMConverter.inverse(x, y, zone, hem, WGS84Converter.a, WGS84Converter.b);
 		Point<Double> result = WGS84Converter.toLambert93(Math.toDegrees(wgs.x), Math.toDegrees(wgs.y));
-		return result.x + " " + result.y;
+		String res = result.x + " " + result.y;
+		if (map == 1) {
+			res += " " + wgs.x + " " + wgs.y;
+		}
+		return res;
 	}
 }

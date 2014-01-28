@@ -12,16 +12,16 @@
   </welcome-file-list>
   
   <servlet>
-  	<servlet-name>Eurecom Geoconverter Web Service</servlet-name>
+  	<servlet-name>Eurecom Geo Converter Web Service</servlet-name>
   	<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
   	<init-param>
-  		<param-name>com.sun.jersey..config.property.packages</param-name>
+  		<param-name>com.sun.jersey.config.property.packages</param-name>
   		<param-value>eurecom.geo.rest</param-value>
   	</init-param>
   	<load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>Eurecom Geoconverter Web Service</servlet-name>
+  	<servlet-name>Eurecom Geo Converter Web Service</servlet-name>
   	<url-pattern>/api/*</url-pattern>
   </servlet-mapping>
   
