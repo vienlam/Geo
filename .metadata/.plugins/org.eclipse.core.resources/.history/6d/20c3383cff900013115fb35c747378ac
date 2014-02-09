@@ -1,0 +1,146 @@
+body {
+	margin: 0px;
+	font-family: Arial;
+	font-size: 13px;
+}
+
+h1 {
+	background-color: #363842;
+	color: #A1FF91;
+	margin: 0;
+	padding: 10px 10px 25px 10px;
+	font-size: 34px;
+	/*border-bottom: 10px;
+	border-bottom-color: #A1FF91;
+	border-bottom-style: solid;
+	border-left: 10px;
+	border-left-color: #A1FF91;
+	border-left-style: solid;*/
+	border-right: 10px;
+	border-right-color: #A1FF91;
+	border-right-style: solid;
+}
+
+h2 {
+	border-bottom: 2px;
+	border-bottom-color: #A1FF91;
+	border-bottom-style: solid;
+}
+
+.nofloat {
+	clear: both;
+}
+
+.container {
+	width: 1024px;
+	margin-left: auto;
+	margin-right: auto;
+	/*background-color: #363842;*/
+	color: Black;
+}
+
+#left {
+	float: left;
+	width: 26%;
+}
+
+#middle {
+	float: left;
+	width: 73%;
+	/*background-color: rgba(54,56,66,0.7);*/
+	padding-left: 0px;
+}
+
+.table {
+	border-spacing: 0;
+	border-collapse: collapse;
+	width: 100%;
+	text-align: center;
+}
+
+.symbol {
+	width: 110px;
+}
+
+.name {
+	width: 110px;
+}
+
+.table td, .table th, .table caption {
+	padding: 5px;
+}
+
+#logo_container {
+	text-align: center;
+	padding-top: 5px;
+	background-color: White;
+} 
+
+#logo {
+	
+	margin-top: 10px;
+	margin-bottom: 10px;
+	width: 220px;
+}
+
+#title_container {
+	padding: 10px;
+	background-color: #363842;
+	color: White;
+	text-align: center;
+}
+
+#title {
+	font-family: Arial;
+	font-size: 34px;
+	font-weight: bold;
+	color: #A1FF91;
+}
+
+#subtitle {
+	font-family: Arial;
+	font-size: 12px;
+	font-style: italic;
+	text-align: center;
+	/*color: #505050;*/
+}
+
+.menu_item {
+	/*padding: 10px;*/
+	background-color: #A1FF91;
+	color: Black;
+	text-align: center;
+	float: left;
+	width: 50%;
+}
+
+.menu_item a {
+	text-decoration: none;
+	color: Black;
+	display: block;
+	padding: 10px;
+}
+
+.menu_item a:hover {
+	background-color: #363842;
+	color: White;
+	font-weight: bold;
+}
+
+.content {
+	padding-left: 10px;
+	padding-right: 10px; 
+}
+
+.code {
+	font-family: "Courier New", Courier, monospace
+}
+
+.anchor {
+	text-decoration: none;
+	color: Black;
+}
+
+.anchor:hover {
+	color: Blue;
+}

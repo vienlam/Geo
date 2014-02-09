@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete 5 elements from project &apos;eurecom.geo.rest&apos;&#x0D;&#x0A;- Original project: &apos;eurecom.geo.rest&apos;&#x0D;&#x0A;- Original elements:&#x0D;&#x0A;     jersey-client.jar&#x0D;&#x0A;     jersey-common.jar&#x0D;&#x0A;     jersey-container-servlet-core.jar&#x0D;&#x0A;     jersey-container-servlet.jar&#x0D;&#x0A;     jersey-server.jar" description="Delete elements" element1="WebContent/WEB-INF/lib/jersey-container-servlet.jar" element2="WebContent/WEB-INF/lib/jersey-client.jar" element3="WebContent/WEB-INF/lib/jersey-container-servlet-core.jar" element4="WebContent/WEB-INF/lib/jersey-common.jar" element5="WebContent/WEB-INF/lib/jersey-server.jar" elements="0" flags="589830" id="org.eclipse.jdt.ui.delete" resources="5" stamp="1384640512940" subPackages="false" version="1.0"/>
+</session>

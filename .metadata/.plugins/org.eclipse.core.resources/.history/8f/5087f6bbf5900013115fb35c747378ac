@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="./style/readme.css">
+<title>Eurecom Geoconverter API Readme</title>
+</head>
+<body>
+<div class="container">
+<section id="left">
+		<div id="title_container">
+			<div id="title">Geo Converter</div>
+			<div id="subtitle">A Geographic Coordinate Converter</div>
+		</div>
+		<div id="menu_container">
+			<div class="menu_item"><a href="./">Converter</a></div>
+			<div class="menu_item"><a href="./#">Datum info</a></div>
+		</div>
+		<div id="logo_container"><img id="logo" alt="Eurecom Logo" src="./images/EURECOM_logo_rs.jpg"/></div>
+	</section>
+
+	<section id="middle">
+		<h1>API Documentation</h1>
+		<div style="height: 36px; background-color: #A1FF91;"></div>
+		<div class="content">
+			<h2>Simple Converter</h2>
+			<p>The API is working through URL like any RESTful service does. The syntax for the service is (note that {} is required and [] is optional):</p>
+			<p class="code">http://{domainName}/eurecom.geo.rest/api/converter/{D1}[P1]{D2}[P2]?{Parameters}</p>
+			<p>Where:<br/>
+				<span class="code">&emsp;domainName</span>: Eurecom domain name.<br/>
+				<span class="code">&emsp;D1</span> and <span class="code">D2</span>: Datum of source and target CRS respectively.<br/>
+				<span class="code">&emsp;P1</span> and <span class="code">P2</span>: Projection of source and target CRS respectively.<br/>
+				<span class="code">&emsp;Parameters</span>: The required parameters as input to the service. See table below for detail of required parameters for each converter. 
+				Parameters are provided as <span class="code">p1=v1&amp;p2=v1</span> where <span class="code">p1</span> is parameter 1 with <span class="code">v1</span> is its value, etc.<br/>
+			</p>
+			<p>
+				<table class="table" border="1" summary="API Parameters">
+					<caption><em>Table 1 - API Parameters</em></caption>
+					<tr>
+						<th rowspan="2">Converters
+						<th colspan="2">Parameters
+						<th rowspan="2">Unit
+						<th rowspan="2">Possible value
+					</tr>
+					<tr>
+						<th class="symbol">Symbol
+						<th class="name">Name
+					</tr>
+					<tr>
+						<td rowspan="2">WGS 84 &rarr; Lambert 93
+						<td class="code">lon
+						<td>Longitude
+						<td>Decimal degrees
+						<td>[-180,180]
+					</tr>
+					<tr>
+						<td class="code">lat
+						<td>Latitude
+						<td>Decimal degrees
+						<td>[-90,90]
+					</tr>
+					<tr>
+						<td rowspan="2">Lambert 93 &rarr; WGS 84
+						<td class="code">x
+						<td>Easting
+						<td>Meters
+						<td>
+					</tr>
+					<tr>
+						<td class="code">y
+						<td>Northing
+						<td>Meters
+						<td>
+					</tr>
+					<tr>
+						<td rowspan="2">WGS 84 &rarr; WGS 84 UTM
+						<td class="code">lon
+						<td>Longitude
+						<td>Decimal degrees
+						<td>[-180,180]
+					</tr>
+					<tr>
+						<td class="code">lat
+						<td>Latitude
+						<td>Decimal degrees
+						<td>[-90,90]
+					</tr>
+					<tr>
+						<td rowspan="4">WGS 84 UTM &rarr; WGS 84
+						<td class="code">x
+						<td>Easting
+						<td>Meters
+						<td>
+					</tr>
+					<tr>
+						<td class="code">y
+						<td>Northing
+						<td>Meters
+						<td>
+					</tr>
+					<tr>
+						<td class="code">zone
+						<td>UTM Zone
+						<td>Integer
+						<td>[1-60]
+					</tr>
+					<tr>
+						<td class="code">hem
+						<td>Hemisphere
+						<td>String
+						<td>North, N, South, S
+					</tr>
+					<tr>
+						<td rowspan="4">WGS 84 UTM &rarr; Lambert 93
+						<td class="code">x
+						<td>Easting
+						<td>Meters
+						<td>
+					</tr>
+					<tr>
+						<td class="code">y
+						<td>Northing
+						<td>Meters
+						<td>
+					</tr>
+					<tr>
+						<td class="code">zone
+						<td>UTM Zone
+						<td>Integer
+						<td>[1-60]
+					</tr>
+					<tr>
+						<td class="code">hem
+						<td>Hemisphere
+						<td>String
+						<td>North, N, South, S
+					</tr>
+					<tr>
+						<td rowspan="2">Lambert 93 &rarr; WGS 84 UTM
+						<td class="code">x
+						<td>Easting
+						<td>Meters
+						<td>
+					</tr>
+					<tr>
+						<td class="code">y
+						<td>Northing
+						<td>Meters
+						<td>
+					</tr>
+				</table>
+			</p>
+			<p>An example can be:<br/>
+				<span class="code">eurecom.fr/eurecom.geo.rest/api/converter/WGS84RGF93Lambert93?lon=4.7021484375&lat=45.2130035559939</span>
+			</p>
+			<h2>Batch Converter</h2>
+			<p>The API also support batch converter by using file. The URL syntax is:</p>
+			<p class="code">http://{domainname}/eurecom.geo.rest/api/converter/file/{D1}[P1]{D2}[P2]?{Parameters}</p>
+			<p>Where <span class="code">D1</span>, <span class="code">P1</span>, <span class="code">D2</span>, and <span class="code">P2</span> is as before. The parameters is as in table below:</p>
+			<p>	
+				<table class="table" border="1" summary="API Parameters">
+					<caption><em>Table 2 - Batch converter parameters</em></caption>
+					<tr>
+						<th colspan="2">Parameters
+						<th rowspan="2">Unit
+						<th rowspan="2">Possible value
+					</tr>
+					<tr>
+						<th>Symbol
+						<th>Name
+					</tr>
+					<tr>
+						<td class="code">source
+						<td>The source file
+						<td>String
+						<td>The URI to the file
+					</tr>
+					<tr>
+						<td class="code">encode
+						<td>The file's encoding system
+						<td>String
+						<td>Any file encoding system, e.g. UTF-8. 
+						Please refer to this <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/intl/encoding.doc.html">supported encoding link</a> for all supported encoding system using <span class="code">java.nio</span> API
+					</tr>
+				</table>
+			</p>
+			
+			<p>The format of each line in the file is the same and base on the converter, the number of inputs is as in table 2.1. The format is as follow:</p>
+			<p class="code">V1 V2 V3 V4</p>
+			<p>Where <span class="code">V1</span>, <span class="code">V2</span>, <span class="code">V3</span>, and <span class="code">V4</span> are the value of each require input for each coordinate. Each value is separated by space.</p>
+			<p>An example of a file as input for Lambert 93 - WGS 84 converter is as follow:</p>
+			<img id="imgBatch" alt="Batch file format" src="./images/Batch_file.png"/>
+			<p>The order of coordinate input in the file is matter, so the exact order is as follow:</p>
+			<p class="code">{longitude/x} {latitude/y} [zone] [hemisphere]</p>
+			<p>The first value should be longitude, in case geographic coordinate, or x, in case of planimetric coordinate. 
+			The second value is latitude or y. In case of UTM coordinates, the following third value is the zone. 
+			The last value is hemisphere. For the possible value of zone and hemisphere, please refer to table 2.4 in section 2.3.2.A.</p>
+			<p>This is the end of the Geo Converter API Documentation.</p>
+			<p style="text-align: center;">Copyright &copy; 2014 Eurecom. All rights reserved.</p>
+		</div>
+	</section>
+</div>
+</body>
+</html>
