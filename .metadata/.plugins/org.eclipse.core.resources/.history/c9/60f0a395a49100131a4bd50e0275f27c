@@ -87,22 +87,40 @@
 			document.getElementById("error-log").innerHTML = "Error: Zone must be a positive integer number range from 1 to 60.";
 			return false;
 		}
+		// Check geographic coordinates
+		// for Latitude range from -90 to 90
+		// for longitude range from -180 to 180
+		if (document.getElementById("project" + s).value == "None") {
+			if(c1 < -180 || c1 > 180 || c2 < -90 || c2 > 90) {
+				document.getElementById("error-log").innerHTML = "Error: Longitude should be in [-180, 180], and Latitude should be in [-90, 90].";
+			}
+		}
 			
 		return true;
 	}
 	
 	function convert(s) {
 		// Check input field here
-		if (checkCondition(s))
+		if (checkCondition(s)) {
 			doConvert(s);
+			lastSystem = s;
+			document.getElementById("error-log").innerHTML = "Attention: Trying to do the conversion. Please try not to drag the marker.";
+		}
 	}
 	
 	function markerDragStart() {
-		document.getElementById("error-log").innerHTML = "Attention: Marker is dragging.";
+		document.getElementById("error-log").innerHTML = "Attention: Start drag marker.";
+	}
+	
+	function markerDrag() {
+		document.getElementById("error-log").innerHTML = "Attention: Dragging marker....";
 	}
 	
 	function markerDragEnd() {
-		document.getElementById("error-log").innerHTML = "Attention: You can use button \"Use Marker's Position\" for the system you want respectively.";
+		document.getElementById("error-log").innerHTML = "Wait for update Sytem " + lastSystem;
+		document.getElementById("error-log").innerHTML += "<br/>Attention: You can use button \"Use Marker's Position\" for the system you want respectively.";
+		map.panTo(marker.getPosition());
+		useMarkerPosition(lastSystem);
 	}
 	
 	function useMarkerPosition(s) {
@@ -113,15 +131,17 @@
 		if (document.getElementById("system" + s).value == "WGS84" && document.getElementById("project" + s).value == "None") {
 			// No need for conversion
 			// Show the coordinates
-			
-			// return
-			return 0;
+			document.getElementById("txts" + s + "coord1").value = latLng.lng();
+			document.getElementById("txts" + s + "coord2").value = latLng.lat();
+			document.getElementById("error-log").innerHTML = "System " + s + " is updated";
 		}
 		else {
-			Do conversion
+			// Do conversion and show the coordinates
+			document.getElementById("error-log").innerHTML = "Wait for update Sytem " + s;
+			doConvert2(latLng.lat(), latLng.lng(), s);
 		}
-		latLng.lat(),
-		latLng.lng()
+		
+		return 0;
 	}
 		
 </script>
@@ -141,6 +161,11 @@
 		
 		var myOptions = {
 				zoom: 15,
+				zoomControl: true,
+				zoomControlOptions: {
+					  style: google.maps.ZoomControlStyle.LARGE,
+					  position: google.maps.ControlPosition.TOP_RIGHT
+					},
 	    		center: latlng,
 	    		mapTypeControl: false,
 	    		navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
@@ -164,6 +189,7 @@
 		google.maps.event.addListener(marker, 'drag', function() {
 			/*updateMarkerStatus('Dragging...');
 			updateMarkerPosition(marker.getPosition());*/
+			markerDrag();
 		});
 		google.maps.event.addListener(marker, 'dragend', function() {
 			/*updateMarkerStatus('Drag ended');
@@ -244,7 +270,7 @@
           			<label for="s1UTMhemN">South</label>
 				</div>
 				<div class="fieldend">
-					<button class="button" onclick="">Use Marker's Position</button>
+					<button class="button" onclick="useMarkerPosition(1)">Use Marker's Position</button>
 					<button class="button" onclick="convert(1)">Convert S1-S2</button>
 				</div>
              </div>
@@ -285,7 +311,7 @@
           			<label for="s2UTMhemN">South</label>
 				</div>
 				<div class="fieldend">
-					<button class="button" onclick="">Use Marker's Position</button>
+					<button class="button" onclick="useMarkerPosition(2)">Use Marker's Position</button>
 					<button class="button" onclick="convert(2)">Convert S1-S2</button>
 				</div>
              </div>
