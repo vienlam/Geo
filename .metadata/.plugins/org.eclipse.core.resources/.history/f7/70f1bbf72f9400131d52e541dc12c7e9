@@ -14,18 +14,13 @@
 			document.getElementById("s" + s + "Lambert93").disabled = "disabled";
 			document.getElementById("s" + s + "ProjNone").style.display = "inherit";
 			document.getElementById("s" + s + "ProjNone").setAttribute("selected", "selected");
-			document.getElementById("s" + s + "ProjNone").disabled = "";
 			document.getElementById("s" + s + "UTMProj").style.display = "inherit";
-			document.getElementById("s" + s + "UTMProj").disabled = "";
 			projectChange(s);
 		} else if (document.getElementById("system" + s).value == "RGF93") {
 			document.getElementById("s" + s + "Lambert93").style.display = "inherit";
-			document.getElementById("s" + s + "Lambert93").disabled = "";
 			document.getElementById("s" + s + "Lambert93").setAttribute("selected", "selected");
 			document.getElementById("s" + s + "ProjNone").style.display = "none";
-			document.getElementById("s" + s + "ProjNone").disabled = "disabled";
 			document.getElementById("s" + s + "UTMProj").style.display = "none";
-			document.getElementById("s" + s + "UTMProj").disabled = "disabled";
 			projectChange(s);
 		}
 		lastSystem = s;
@@ -288,16 +283,16 @@
 				<div class="field_container">
 					<label class="label">Datum:</label>
 					<select id="system2" class="field" onchange="systemChange(2)">
-						<option id="s2WGS84" value="WGS84">WGS84</option>
-						<option id="s2RGF93" value="RGF93" selected="selected">RGF93</option>
+						<option id="s2WGS84" value="WGS84" selected="selected">WGS84</option>
+						<option id="s2RGF93" value="RGF93">RGF93</option>
 					</select>
 				</div>
 				<div class="field_container">
 					<label class="label">Projection:</label>
 					<select id="project2" class="field"  onchange="projectChange(2)">
-						<option id="s2UTMProj" style="display: none;" value="UTM">UTM</option>
-						<option id="s2Lambert93" value="Lambert93" selected="selected">Lambert93</option>
-						<option  id="s2ProjNone" style="display: none;" value="None">None</option>
+						<option id="s2UTMProj" value="UTM" selected="selected">UTM</option>
+						<option id="s2Lambert93" style="display: none;" value="Lambert93">Lambert93</option>
+						<option  id="s2ProjNone" value="None">None</option>
 					</select>
 				</div>
 				<div class="field_container">
@@ -329,11 +324,6 @@
 	
 </div>
 <div class="nofloat"></div>
-
-<script>
-systemChange(1);
-systemChange(2);
-</script>
 
 </body>
 </html>

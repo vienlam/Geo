@@ -297,7 +297,7 @@
 					<select id="project2" class="field"  onchange="projectChange(2)">
 						<option id="s2UTMProj" style="display: none;" value="UTM">UTM</option>
 						<option id="s2Lambert93" value="Lambert93" selected="selected">Lambert93</option>
-						<option  id="s2ProjNone" style="display: none;" value="None">None</option>
+						<option  id="s2ProjNone" value="None">None</option>
 					</select>
 				</div>
 				<div class="field_container">
