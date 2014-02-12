@@ -1,3 +1,0 @@
-eclipse.preferences.version=1
-module-start-timeout=300000
-runtimes=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<runtimes>\r\n  <runtime id\="GlassFish 4.0" location\="C\:/glassfish4/glassfish" name\="GlassFish 4.0" runtime-type-id\="org.glassfish.jst.server.runtime.glassfish4" server_definition_id\="org.glassfish.jst.server.runtime.glassfish4" timestamp\="0" vm-install-id\="1384209814385" vm-install-type-id\="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType">\r\n    <map key\="generic_server_instance_properties" sunappserver.rootdirectory\="C\:/glassfish4/glassfish" sunappserver.runtimeName\="GlassFish 4.0"/>\r\n  </runtime>\r\n</runtimes>\r\n
